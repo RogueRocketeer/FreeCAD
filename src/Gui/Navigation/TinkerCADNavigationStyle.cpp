@@ -233,6 +233,7 @@ SbBool TinkerCADNavigationStyle::processSoEvent(const SoEvent* const ev)
             newmode = NavigationStyle::IDLE;
             break;
         case BUTTON1DOWN:
+        case CTRLDOWN | BUTTON1DOWN:
             newmode = NavigationStyle::SELECTION;
             break;
         case BUTTON2DOWN:
