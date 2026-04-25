@@ -283,6 +283,12 @@ protected:
     void setSelectionStartPosition(const SbVec2s& position);
     void clearSelectionStartPosition();
     bool tryStartBoxSelection(const SoLocation2Event* const ev, bool additiveSelection = false);
+    bool tryStartBoxSelection(
+        const SbVec2s& startPosition,
+        const SoLocation2Event* const ev,
+        bool additiveSelection = false,
+        bool selectElement = false
+    );
 
 protected:
     struct
