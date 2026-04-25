@@ -25,6 +25,7 @@
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoAnnotation.h>
+#include <Inventor/nodes/SoAlphaTest.h>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoDepthBuffer.h>
@@ -74,13 +75,13 @@ void ViewProviderMassPropertiesResult::attach(App::DocumentObject* obj)
     auto* annotation = new SoAnnotation();
     displayRoot->addChild(annotation);
 
+    auto* depth = new SoDepthBuffer();
+    depth->function = SoDepthBufferElement::LESS;
+    depth->range = SbVec2f(0.0f, 0.001f);
+    annotation->addChild(depth);
+
     lcsSwitch = new SoSwitch(SO_SWITCH_NONE);
     annotation->addChild(lcsSwitch);
-
-    auto* markerDepth = new SoDepthBuffer();
-    markerDepth->function = SoDepthBufferElement::LESS;
-    markerDepth->range = SbVec2f(0.0f, 0.001f);
-    annotation->addChild(markerDepth);
 
     auto* seperator = new SoSeparator();
     lcsSwitch->addChild(seperator);
@@ -130,6 +131,11 @@ void ViewProviderMassPropertiesResult::attach(App::DocumentObject* obj)
 
             translationOut = new SoTranslation();
             labelSep->addChild(translationOut);
+
+            auto* labelAlpha = new SoAlphaTest();
+            labelAlpha->function = SoAlphaTest::GREATER;
+            labelAlpha->value = 0.0f;
+            labelSep->addChild(labelAlpha);
 
             auto* labelText = new Gui::SoFrameLabel();
             labelText->string.setValue(text);
