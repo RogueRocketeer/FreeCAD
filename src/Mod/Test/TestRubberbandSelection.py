@@ -37,6 +37,7 @@ LEFT_BUTTON = QtCore.Qt.MouseButton.LeftButton
 NO_BUTTON = QtCore.Qt.MouseButton.NoButton
 NO_MODIFIER = QtCore.Qt.KeyboardModifier.NoModifier
 CONTROL_MODIFIER = QtCore.Qt.KeyboardModifier.ControlModifier
+SHIFT_MODIFIER = QtCore.Qt.KeyboardModifier.ShiftModifier
 OTHER_FOCUS_REASON = QtCore.Qt.FocusReason.OtherFocusReason
 MOUSE_MOVE = QtCore.QEvent.Type.MouseMove
 MOUSE_PRESS = QtCore.QEvent.Type.MouseButtonPress
@@ -58,6 +59,10 @@ class TestRubberbandSelection(unittest.TestCase):
         ("Revit", "Gui::RevitNavigationStyle"),
         ("SolidWorks", "Gui::SolidWorksNavigationStyle"),
         ("TinkerCAD", "Gui::TinkerCADNavigationStyle"),
+    )
+    MODIFIED_DRAG_STYLES = (
+        ("Gesture", "Gui::GestureNavigationStyle"),
+        ("MayaGesture", "Gui::MayaGestureNavigationStyle"),
     )
 
     def setUp(self):
@@ -117,6 +122,30 @@ class TestRubberbandSelection(unittest.TestCase):
                     {self.left_box.Name, self.right_box.Name},
                 )
 
+    def test_shift_drag_selects_in_modified_styles(self):
+        for label, style in self.MODIFIED_DRAG_STYLES:
+            with self.subTest(style=label):
+                FreeCADGui.Selection.clearSelection()
+                self.view.setNavigationType(style)
+                self._refresh_view()
+
+                self._drag_select(self._selection_rect(self.left_box), shift=True)
+                self.assertEqual(self._selected_names(), {self.left_box.Name})
+
+    def test_shift_ctrl_drag_adds_in_modified_styles(self):
+        for label, style in self.MODIFIED_DRAG_STYLES:
+            with self.subTest(style=label):
+                FreeCADGui.Selection.clearSelection()
+                FreeCADGui.Selection.addSelection(self.doc.Name, self.right_box.Name)
+                self.view.setNavigationType(style)
+                self._refresh_view()
+
+                self._drag_select(self._selection_rect(self.left_box), control=True, shift=True)
+                self.assertEqual(
+                    self._selected_names(),
+                    {self.left_box.Name, self.right_box.Name},
+                )
+
     def _refresh_view(self):
         self.view.viewIsometric()
         self.view.fitAll()
@@ -163,11 +192,15 @@ class TestRubberbandSelection(unittest.TestCase):
     def _selection_rect(self, obj):
         return self._object_rect(obj, pad=18)
 
-    def _drag_select(self, rect, control=False):
+    def _drag_select(self, rect, control=False, shift=False):
         start = rect.topLeft()
         center = rect.center()
         end = rect.bottomRight()
-        modifiers = CONTROL_MODIFIER if control else NO_MODIFIER
+        modifiers = NO_MODIFIER
+        if control:
+            modifiers |= CONTROL_MODIFIER
+        if shift:
+            modifiers |= SHIFT_MODIFIER
 
         self._send_mouse_event(MOUSE_MOVE, start, NO_BUTTON, NO_BUTTON, modifiers)
         self._process_events(10)
