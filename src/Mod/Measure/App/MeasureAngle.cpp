@@ -239,7 +239,7 @@ bool MeasureAngle::setOrigin(TopoDS_Shape& s1, TopoDS_Shape& s2)
         case MeasurementCase::EdgeEdge:
             return computeOriginEdgeEdge(s1, s2);
         case MeasurementCase::FaceEdge:
-            return computeOriginFaceEdge(s1, s2);
+            return computeOriginFaceEdge(s1);
     }
 
     // cant reach here
@@ -336,7 +336,7 @@ bool MeasureAngle::computeOriginEdgeEdge(TopoDS_Shape& s1, TopoDS_Shape& s2)
     return true;
 }
 
-bool MeasureAngle::computeOriginFaceEdge(TopoDS_Shape& s1, TopoDS_Shape& s2)
+bool MeasureAngle::computeOriginFaceEdge(TopoDS_Shape& s1)
 {
     _isImgOrigin = true;
 
@@ -378,7 +378,7 @@ bool MeasureAngle::getOrigin(gp_Pnt& outOrigin)
     return true;
 }
 
-bool MeasureAngle::setDirections(TopoDS_Shape& s1, TopoDS_Shape& s2)
+bool MeasureAngle::setDirections(TopoDS_Shape& s1)
 {
 
     direction1 = vector1();
@@ -504,7 +504,7 @@ App::DocumentObjectExecReturn* MeasureAngle::execute()
         mCase = MeasurementCase::FaceEdge;
     }
 
-    if (!setOrigin(s1, s2) || !setDirections(s1, s2)) {
+    if (!setOrigin(s1, s2) || !setDirections(s1)) {
         return new App::DocumentObjectExecReturn("Failed to Set Origin");
     }
 
