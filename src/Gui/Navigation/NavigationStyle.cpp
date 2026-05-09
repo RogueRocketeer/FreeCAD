@@ -2119,7 +2119,7 @@ TYPESYSTEM_SOURCE_ABSTRACT(Gui::UserNavigationStyle, Gui::NavigationStyle)
 
 std::string UserNavigationStyle::userFriendlyName() const
 {
-    std::string name = this->getTypeId().getName();
+    std::string_view name = this->getTypeId().getName();
     // remove namespaces
     std::size_t pos = name.rfind("::");
     if (pos != std::string::npos) {
@@ -2131,7 +2131,7 @@ std::string UserNavigationStyle::userFriendlyName() const
     if (pos != std::string::npos) {
         name = name.substr(0, pos);
     }
-    return name;
+    return std::string {name};
 }
 
 std::map<Base::Type, std::string> UserNavigationStyle::getUserFriendlyNames()

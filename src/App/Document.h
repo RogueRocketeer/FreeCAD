@@ -468,11 +468,13 @@ public:
      *
      * @return The newly added object.
      */
-    DocumentObject* addObject(const char* sType,
-                              const char* pObjectName = nullptr,
-                              bool isNew = true,
-                              const char* viewType = nullptr,
-                              bool isPartial = false);
+    DocumentObject* addObject(
+        std::string_view sType,
+        const char* pObjectName = nullptr,
+        bool isNew = true,
+        const char* viewType = nullptr,
+        bool isPartial = false
+    );
 
     /**
      * @brief Add an object of a given type to the document.
@@ -631,7 +633,7 @@ public:
      * @return A unique name for the object or an empty string if the proposed
      * name is empty.
      */
-    std::string getUniqueObjectName(const char* proposedName) const;
+    std::string getUniqueObjectName(std::string_view proposedName) const;
 
     /**
      * @brief Get a unique label for an object.

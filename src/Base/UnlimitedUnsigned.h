@@ -71,7 +71,7 @@ public:
             if (partDigitCount >= lastStartPosition) {
                 // partial chunk of leading digits
                 const auto sub = text.substr(0, lastStartPosition);
-                const auto [ptr, err] = std::from_chars<PartType>(sub.begin(), sub.end(), result[i]);
+                const auto [ptr, err] = std::from_chars(sub.data(), sub.data() + sub.size(), result[i]);
                 if (err != std::errc {}) {
                     result[i] = 0;
                 }
@@ -79,7 +79,7 @@ public:
             else {
                 lastStartPosition -= partDigitCount;
                 const auto sub = text.substr(lastStartPosition, partDigitCount);
-                const auto [ptr, err] = std::from_chars<PartType>(sub.begin(), sub.end(), result[i]);
+                const auto [ptr, err] = std::from_chars(sub.data(), sub.data() + sub.size(), result[i]);
                 if (err != std::errc {}) {
                     result[i] = 0;
                 }
